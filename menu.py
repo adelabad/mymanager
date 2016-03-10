@@ -1,11 +1,11 @@
 import sys
 from PyQt4 import QtGui
 from PyQt4 import QtCore
-
+import os
 
 class Filemanager(QtGui.QWidget):
 
-    def __init__(self,Parent=None):
+    def __init__(self):
         super(Filemanager, self).__init__()
         self.initui()
 
@@ -29,24 +29,20 @@ class Filemanager(QtGui.QWidget):
         box.addWidget(self.check_close)
         tab3.setLayout(box)
         tab1_vbox = QtGui.QHBoxLayout()
-
         self.new_folder = QtGui.QPushButton("New Folder")      #######
-        self.new_folder.setFixedSize(90,60)##########
         self.new_folder.setIcon(QtGui.QIcon("folder-add.ico"))
-
+        self.new_folder.setFixedWidth(100)
         self.new_folder.setToolTip("New Folder")
-        #self.new_folder.setStyleSheet("border-radius: 4px")          #########
+        self.new_folder.setStyleSheet("border: 0px")          #########
         self.del_folder = QtGui.QPushButton("Delete Folder")     #########
         self.del_folder.setIcon(QtGui.QIcon("folder-delete.ico"))
-
+        self.del_folder.setFixedWidth(100)
         self.del_folder.setToolTip("Delete Folder")
-        self.del_folder.setFixedSize(100,60)#######
-        #self.del_folder.setStyleSheet("border-radius: 4px")              ######
+        self.del_folder.setStyleSheet("border: 0px")              ######
         tab1_vbox.addWidget(self.new_folder)
         tab1_vbox.addWidget(self.del_folder)
         tab1.setLayout(tab1_vbox)
-
-        tab_widget.setFixedHeight(80)
+        tab_widget.setFixedHeight(100)
         hbox.addWidget(tab_widget)
         vbox = QtGui.QHBoxLayout()
         back = QtGui.QPushButton()
@@ -59,26 +55,7 @@ class Filemanager(QtGui.QWidget):
         next.setStyleSheet("border: 0px")#############
         self.addressbar = QtGui.QLineEdit()
         self.searchbar= QtGui.QLineEdit()######
-#################################
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#####################
         self.combo = QtGui.QComboBox(self)#####
         self.combo.addItem("System Search")####
         self.combo.addItem("Web Search")#######
@@ -93,6 +70,7 @@ class Filemanager(QtGui.QWidget):
         self.treeview = QtGui.QTreeView()
         spath = QtCore.QString("")
         self.dirmodel = QtGui.QFileSystemModel(self)
+        self.dirmodel.setFilter(QtCore.QDir.AllDirs | QtCore.QDir.NoDotAndDotDot)
         self.dirmodel.setRootPath(spath)
         self.treeview.setModel(self.dirmodel)
 
@@ -124,16 +102,13 @@ class Filemanager(QtGui.QWidget):
         back.clicked.connect(self.back_clicked)
         next.clicked.connect(self.next_clicked)
 
-        self.setGeometry(0, 30, 1370, 700)
+        self.setGeometry(100, 100, 700, 500)
         self.setWindowTitle('FileManager')
         self.setLayout(hbox)
         self.show()
 
     @QtCore.pyqtSlot(QtCore.QModelIndex)
     def on_treeview_clicked(self, index):
-        self.click_sound=QtGui.QSound("_click_.wav")#####3
-        self.click_sound.play()########
-
         spath = QtCore.QString(self.dirmodel.fileInfo(index).absoluteFilePath())
         self.listview.setRootIndex(self.filemodel.setRootPath(spath))
         self.addressbar.setText(spath)
@@ -142,21 +117,21 @@ class Filemanager(QtGui.QWidget):
 
     @QtCore.pyqtSlot(QtCore.QModelIndex)
     def on_listview_clicked(self, index):
-        self.click_sound=QtGui.QSound("_click_.wav")#####333
-        self.click_sound.play()#######
         spath = QtCore.QString(self.filemodel.fileInfo(index).absoluteFilePath())
-        self.listview.setRootIndex(self.filemodel.setRootPath(spath))
-        self.addressbar.setText(spath)
-        if self.backlst[len(self.backlst)-1] != spath:
-            self.backlst.append(spath)
+        if os.path.isfile(spath):
+            os.startfile(spath)
+        else:
+            self.listview.setRootIndex(self.filemodel.setRootPath(spath))
+            self.addressbar.setText(spath)
+            if self.backlst[len(self.backlst)-1] != spath:
+                self.backlst.append(spath)
 
     def address_changed(self):
-        self.click_sound=QtGui.QSound("_click_.wav")#############
-        self.click_sound.play()#########
         spath = self.addressbar.text()
         self.listview.setRootIndex(self.filemodel.setRootPath(spath))
         if self.backlst[len(self.backlst)-1] != spath:
             self.backlst.append(spath)
+
 
     def check_treeview(self):
         if self.check_close.checkState():
@@ -165,8 +140,8 @@ class Filemanager(QtGui.QWidget):
             self.splitter1.setSizes([0, 200])
 
     def back_clicked(self):
-        self.click_sound=QtGui.QSound("_click_.wav")######33##
-        self.click_sound.play()#########
+        self.click_sound=QtGui.QSound("_click_.MP3")
+        self.click_sound.play()
         self.nextlst.append(self.backlst.pop())
         if len(self.backlst) < 1 :
             self.backlst.append("")
@@ -175,13 +150,18 @@ class Filemanager(QtGui.QWidget):
             self.listview.setRootIndex(self.filemodel.setRootPath(spath))
             self.addressbar.setText(spath)
 
+
+
     def next_clicked(self):
-        self.click_sound=QtGui.QSound("_click_.wav")#########
-        self.click_sound.play()#########
+        self.click_sound=QtGui.QSound("_click_.MP3")
+        self.click_sound.play()
         if len(self.nextlst) > 0:
             spath = self.nextlst.pop()
-            self.listview.setRootIndex(self.filemodel.setRootPath(spath))
-            self.addressbar.setText(spath)
+            if spath[len(spath)-2] == ":" and not self.backlst[len(self.backlst)-1] == "":
+                self.nextlst=[]
+            else:
+                self.listview.setRootIndex(self.filemodel.setRootPath(spath))
+                self.addressbar.setText(spath)
 
 def main():
     app = QtGui.QApplication(sys.argv)
