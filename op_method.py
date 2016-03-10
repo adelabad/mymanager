@@ -129,28 +129,27 @@ def operator(op, *args):
 
     if op == "file_search_all":
         try:
-            file_search_all.file_search_all(args[0],args[1])
+            return file_search_all.file_search_all(args[0],args[1])
         except:
             print "unable to operate"
 
 
     if op == "file_search_exact":
         try:
-            file_search_exact.file_search_exact(args[0],args[1])
+            return file_search_exact.file_search_exact(args[0],args[1])
         except:
             print "unable to operate"
 
 
     if op == "folder_search_all":
         try:
-            folder_search_all.folder_search_all(args[0],args[1])
+            return folder_search_all.folder_search_all(args[0],args[1])
         except:
             print "unable to operate"
 
 
     if op == "folder_search_exact":
         try:
-            folder_search_exact.folder_search_exact(args[0],args[1])
+            return folder_search_exact.folder_search_exact(args[0],args[1])
         except:
             print "unable to operate"
-
