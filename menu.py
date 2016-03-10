@@ -62,10 +62,10 @@ class Filemanager(QtGui.QWidget):
         self.exit_btn.setFixedWidth(50)
         self.exit_btn.setToolTip("Exit")
 
-        self.cmd=QtGui.QPushButton("Command Promote")
+        self.cmd=QtGui.QPushButton("Command Prompt")
         self.cmd.setIcon(QtGui.QIcon("command.ico"))
         self.cmd.setFixedWidth(120)
-        self.cmd.setToolTip("Command Promote")
+        self.cmd.setToolTip("Command Prompt")
 
         self.control_panel=QtGui.QPushButton("Control Panel")
         self.control_panel.setIcon(QtGui.QIcon("Control_Panel.ico"))
@@ -213,7 +213,7 @@ class Filemanager(QtGui.QWidget):
         self.click_sound.play()
         if len(self.nextlst) > 0:
             spath = self.nextlst.pop()
-            if spath[len(spath)-2] == ":" and not self.backlst[len(self.backlst)-1] == "":
+            if spath[len(spath)-2] == ":" and not self.backlst[len(self.backlst)-1] == "" and len(spath)>0:
                 self.nextlst=[]
             else:
                 self.listview.setRootIndex(self.filemodel.setRootPath(spath))
