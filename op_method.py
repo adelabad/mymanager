@@ -12,7 +12,7 @@ import folder_search_all
 import folder_search_exact
 
 
-def operator(self, op, *args):
+def operator(op, *args):
 
 
     if op == "rename":
