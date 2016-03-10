@@ -153,3 +153,41 @@ def operator(op, *args):
             return folder_search_exact.folder_search_exact(args[0],args[1])
         except:
             print "unable to operate"
+
+
+    if op == "file_size":
+        try:
+            return str(os.path.getsize(args[0]))
+        except:
+            print "couldn't find the file"
+
+
+    if op == "folder_size":
+        try:
+            return str(len(os.listdir(args[0])))
+        except:
+            print "couldn't find such directory"
+
+
+    if op == "drive_name":
+        try:
+            return os.path.splitdrive(args[0])[0]
+        except:
+            print "couldn't operate"
+
+
+    if op == "address_split":
+        try:
+            return os.path.split(args[0])
+        except:
+            print "couldn't operate"
+
+
+    if op == "file_format":
+        try:
+            return os.path.splitext(args[0])[1]
+        except:
+            print "couldn't operate"
+
+
+    #this will be updated
