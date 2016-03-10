@@ -7,20 +7,26 @@ import threading
 
 
 class MyThread(threading.Thread):
-    def __init__(self, func, args, name=''):
+    def __init__(self, func, name=''):
         threading.Thread.__init__(self, name=name)
         self.func = func
-        self.args = args
 
     def run(self):
-        self.func(*self.args)
+        self.func()
 
+'''
+t = MyThread(main)
+self.threads.append(t)
+self.threads[-1].start()
+'''
+#oon jayi ke ghrare window jadid baz beshe in se khat ro bezarid
 
 class Filemanager(QtGui.QWidget):
 
     def __init__(self):
         super(Filemanager, self).__init__()
         self.initui()
+        self.threads = []
 
     def initui(self):
 
