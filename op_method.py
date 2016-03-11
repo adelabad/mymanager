@@ -199,7 +199,8 @@ def operator(op, *args):
                 os.chdir(args[0])
                 os.system('start')
         except:
-            print "couldn't operate"
+            os.chdir("c:\\")
+            os.system('start')
 
 
     if op == "control_panel":
