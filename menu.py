@@ -198,22 +198,23 @@ class Filemanager(QtGui.QWidget):
 
     def address_changed(self):
         spath = self.addressbar.text()
-        self.listview.setRootIndex(self.filemodel.setRootPath(spath))
-        if self.backlst[len(self.backlst)-1] != spath:
-            self.backlst.append(spath)
-        if len(spath)<4:
-            if spath == "":
-                self.statusbar.showMessage("")
-            else:
-                self.statusbar.showMessage(spath[0])
-        else :
-            try :
-                if operator("check_file",spath):
-                    self.statusbar.showMessage(spath.split("/")[-1]+"\tsize:\t"+operator("file_size",spath)+"Byte")
+        if operator("check_path", spath) or spath == "":
+            self.listview.setRootIndex(self.filemodel.setRootPath(spath))
+            if self.backlst[len(self.backlst)-1] != spath:
+                self.backlst.append(spath)
+            if len(spath)<4:
+                if spath == "":
+                    self.statusbar.showMessage("")
                 else:
-                    self.statusbar.showMessage(spath.split("/")[-1]+"\titems:\t"+operator("folder_size",spath))
-            except :
-                print ""
+                    self.statusbar.showMessage(spath[0])
+            else :
+                try :
+                    if operator("check_file",spath):
+                        self.statusbar.showMessage(spath.split("/")[-1]+"\tsize:\t"+operator("file_size",spath)+"Byte(s)")
+                    else:
+                        self.statusbar.showMessage(spath.split("/")[-1]+"\titems:\t"+operator("folder_size",spath))
+                except :
+                    print ""
 
     def check_treeview(self):
         if self.check_close.checkState():
