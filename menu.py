@@ -50,7 +50,7 @@ class Filemanager(QtGui.QWidget):
         empty_lbl=QtGui.QLabel()
         #empty_lbl.setFixedWidth(500)
 
-
+        ##############################################################
         tab1_vbox = QtGui.QHBoxLayout()
         self.new_window=QtGui.QPushButton("New Window")
         self.new_window.setIcon(QtGui.QIcon("new_window.ico"))
@@ -91,6 +91,51 @@ class Filemanager(QtGui.QWidget):
 
         tab1_vbox.addWidget(empty_lbl)
         tab1.setLayout(tab1_vbox)
+        #################################################################################
+        tab2_vbox = QtGui.QHBoxLayout()
+        self.copy_btn=QtGui.QPushButton("Copy")
+        #self.new_window.setIcon(QtGui.QIcon("new_window.ico"))
+        self.copy_btn.setFixedWidth(100)
+        self.copy_btn.setToolTip("Copy")
+
+        self.paste_btn=QtGui.QPushButton("Paste")
+        #self.exit_btn.setIcon(QtGui.QIcon("exit.ico"))
+        self.paste_btn.setFixedWidth(50)
+        self.paste_btn.setToolTip("Paste")
+
+        self.cut_btn=QtGui.QPushButton("Cut")
+        #self.cmd.setIcon(QtGui.QIcon("command.ico"))
+        self.cut_btn.setFixedWidth(120)
+        self.cut_btn.setToolTip("Cut")
+
+        self.rename_btn=QtGui.QPushButton("Rename")
+        #self.control_panel.setIcon(QtGui.QIcon("Control_Panel.ico"))
+        self.rename_btn.setFixedWidth(100)
+        self.rename_btn.setToolTip("Rename")
+
+
+        self.remove_btn=QtGui.QPushButton("Remove")
+        #self.control_panel.setIcon(QtGui.QIcon("Control_Panel.ico"))
+        self.rename_btn.setFixedWidth(100)
+        self.rename_btn.setToolTip("Remove")
+
+
+        tab2_vbox.addWidget(self.copy_btn)
+        tab2_vbox.addWidget(self.cut_btn)
+        tab2_vbox.addWidget(self.paste_btn)
+        tab2_vbox.addWidget(self.rename_btn)
+        tab2_vbox.addWidget(self.remove_btn)
+        tab2_vbox.addWidget(empty_lbl)
+        tab2.setLayout(tab2_vbox)
+
+
+
+
+
+
+
+
+        ###########################################################################################
         tab_widget.setFixedHeight(70)
         #tab_widget.setFixedWidth(250)
         hbox.addWidget(tab_widget)
@@ -160,7 +205,11 @@ class Filemanager(QtGui.QWidget):
         self.exit_btn.clicked.connect(self.exit_clicked)
         self.new_window.clicked.connect(self.new_win_clicked)
         self.new_folder.clicked.connect(self.new_folder_clicked)
-
+        self.remove_btn.clicked.connect(self.remove_btn_clicked)
+        self.copy_btn.clicked.connect(self.copy_btn_clicked)
+        self.rename_btn.clicked.connect(self.rename_btn_clicked)
+        self.cut_btn.clicked.connect(self.cut_btn_clicked)
+        self.paste_btn.clicked.connect(self.paste_btn_clicked)
         self.statusbar = QtGui.QStatusBar()
         hbox.addWidget(self.statusbar)
 
@@ -228,10 +277,10 @@ class Filemanager(QtGui.QWidget):
         self.click_sound=QtGui.QSound("_click_.wav")
         self.click_sound.play()
         self.nextlst.append(self.backlst.pop())
-        if len(self.backlst) < 1 :
+        if -1<len(self.backlst) < 1 :
             self.backlst.append("")
 
-        else:
+        elif len(self.backlst)>=1:
             spath = self.backlst[len(self.backlst)-1]
             self.listview.setRootIndex(self.filemodel.setRootPath(spath))
             self.addressbar.setText(spath)
@@ -241,7 +290,7 @@ class Filemanager(QtGui.QWidget):
                 else:
                     self.statusbar.showMessage(spath[0])
             elif operator("check_file",spath):
-                self.statusbar.showMessage(spath.split("/")[-1]+"\tsize:\t"+operator("file_size",spath)+"Byte")
+                self.statusbar.showMessage(spath.split("/")[-1]+"\tsize:\t"+operator("file_size",spath)+"Byte(s)")
             else:
                 self.statusbar.showMessage(spath.split("/")[-1]+"\titems:\t"+operator("folder_size",spath))
 
@@ -251,10 +300,10 @@ class Filemanager(QtGui.QWidget):
         if len(spath)<4:
             self.statusbar.showMessage(spath[0])
         elif operator("check_file",spath):
-            self.statusbar.showMessage(spath.split("/")[-1]+"\tsize:\t"+operator("file_size",spath)+"Byte")
+            self.statusbar.showMessage(spath.split("/")[-1]+"\tsize:\t"+operator("file_size",spath)+"Byte(s)")
         else:
             self.statusbar.showMessage(spath.split("/")[-1]+"\titems:\t"+operator("folder_size",spath))
-
+        self.temp_path=spath
 ###################################
     def on_ctrl_pnl_clicked(self):
         self.click_sound=QtGui.QSound("_click_.wav")
@@ -270,17 +319,18 @@ class Filemanager(QtGui.QWidget):
         self.click_sound.play()
         if len(self.nextlst) > 0:
             spath = self.nextlst.pop()
-            if spath[len(spath)-2] == ":" and not self.backlst[len(self.backlst)-1] == "" and len(spath)>0:
-                self.nextlst=[]
-            else:
-                self.listview.setRootIndex(self.filemodel.setRootPath(spath))
-                self.addressbar.setText(spath)
-            if len(spath)<4:
-                self.statusbar.showMessage(spath[0])
-            elif operator("check_file",spath):
-                self.statusbar.showMessage(spath.split("/")[-1]+"\tsize:\t"+operator("file_size",spath)+"Byte")
-            else:
-                self.statusbar.showMessage(spath.split("/")[-1]+"\titems:\t"+operator("folder_size",spath))
+            if len(spath)>0:
+                if spath[len(spath)-2] == ":" and not self.backlst[len(self.backlst)-1] == "":
+                    self.nextlst=[]
+                else:
+                    self.listview.setRootIndex(self.filemodel.setRootPath(spath))
+                    self.addressbar.setText(spath)
+                if len(spath)<4:
+                    self.statusbar.showMessage(spath[0])
+                elif operator("check_file",spath):
+                    self.statusbar.showMessage(spath.split("/")[-1]+"\tsize:\t"+operator("file_size",spath)+"Byte(s)")
+                else:
+                    self.statusbar.showMessage(spath.split("/")[-1]+"\titems:\t"+operator("folder_size",spath))
 
     def exit_clicked(self):
         self.click_sound=QtGui.QSound("_click_.wav")
@@ -299,8 +349,75 @@ class Filemanager(QtGui.QWidget):
             'Enter Folder Name:')
 
         if ok:
-            operator("new_fd",str(self.addressbar.text())+str(text))
+            if self.addressbar.text()[-1] != "\\":
+                operator("new_fd",str(self.addressbar.text())+"\\"+str(text))
+            else:
+                operator("new_fd",str(self.addressbar.text())+str(text))
 
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    def remove_btn_clicked(self):
+        self.click_sound=QtGui.QSound("_click_.wav")
+        self.click_sound.play()
+        try:
+            if operator("check_file",str(self.temp_path)):
+                #operator("change_dir",str(self.temp_path))
+                operator("remove_file",str(self.temp_path))
+
+                print str(self.temp_path)
+            elif operator("check_dir",str(self.temp_path)):
+                operator("remove_folder",str(self.temp_path))
+        except:
+            print "Coudn't open !"
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+    def copy_btn_clicked(self):
+        self.click_sound=QtGui.QSound("_click_.wav")
+        self.click_sound.play()
+        self.tempcopy=self.temp_path
+        self.order="copy"
+
+
+    def cut_btn_clicked(self):
+        self.click_sound=QtGui.QSound("_click_.wav")
+        self.click_sound.play()
+        self.tempcut=self.temp_path
+        self.order="cut"
+
+    def paste_btn_clicked(self):
+        self.click_sound=QtGui.QSound("_click_.wav")
+        self.click_sound.play()
+
+        try :
+            if self.order=="copy":
+                if operator("check_file",str(self.tempcopy)):
+                     operator("copy_file",str(self.tempcopy),str(self.addressbar.text()))
+                elif operator("check_dir",str(self.tempcopy)):
+                     operator("copy_folder",str(self.tempcopy),str(self.addressbar.text()+"/"+str(self.tempcopy).split("/")[-1]))
+
+            elif self.order=="cut":
+                operator("move",str(self.tempcut),str(self.addressbar.text()))
+            print self.order , self.addressbar.text() , self.tempcopy
+        except:
+            print "COUDNT"
+
+#####################33
+    def rename_btn_clicked(self):
+        self.click_sound=QtGui.QSound("_click_.wav")
+        self.click_sound.play()
+        text, ok = QtGui.QInputDialog.getText(self, 'Input Dialog',
+            'Enter the New Name:')
+        tempdir=self.addressbar.text()
+        if ok:
+            try :
+                if operator("check_dir",str(self.temp_path)):
+                    operator("rename",str(self.temp_path),str(tempdir)+"/"+text)
+                    print str(self.temp_path),str(tempdir),text
+                elif operator("check_file",str(self.temp_path)):
+                    operator("rename",str(self.temp_path),str(tempdir)+'/'+text+str(operator("file_format",str(self.temp_path))))
+                    print str(self.temp_path),str(tempdir)+'/'+text+str(operator("file_format",str(self.temp_path)))
+            except:
+                print "Coudnt"
 
 def main():
     app = QtGui.QApplication(sys.argv)
