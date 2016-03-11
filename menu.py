@@ -147,9 +147,10 @@ class Filemanager(QtGui.QWidget):
         QtGui.QApplication.setStyle(QtGui.QStyleFactory.create("Cleanlooks"))
 
         self.treeview.clicked.connect(self.on_treeview_clicked)
-        self.listview.doubleClicked.connect(self.on_listview_clicked)
+        self.listview.doubleClicked.connect(self.on_listview_doubleclicked)
         self.addressbar.textChanged.connect(self.address_changed)
         self.check_close.clicked.connect(self.check_treeview)
+        self.listview.clicked.connect(self.on_listview_clicked)
 
         back.clicked.connect(self.back_clicked)
         next.clicked.connect(self.next_clicked)
@@ -157,6 +158,9 @@ class Filemanager(QtGui.QWidget):
         self.cmd.clicked.connect(self.on_cmd_clicked)
         self.exit_btn.clicked.connect(self.exit_clicked)
         self.new_window.clicked.connect(self.new_win_clicked)
+
+        self.statusbar = QtGui.QStatusBar()
+        hbox.addWidget(self.statusbar)
 
         self.setGeometry(100, 100, 700, 500)
         self.setWindowTitle('FileManager')
@@ -172,14 +176,20 @@ class Filemanager(QtGui.QWidget):
         self.addressbar.setText(spath)
         if self.backlst[len(self.backlst)-1] != spath:
             self.backlst.append(spath)
+        if len(spath)<4:
+            self.statusbar.showMessage(spath[0])
+        elif operator("check_file",spath):
+            self.statusbar.showMessage(spath.split("/")[-1]+"\tsize:\t"+operator("file_size",spath)+"Byte")
+        else:
+            self.statusbar.showMessage(spath.split("/")[-1]+"\titems:\t"+operator("folder_size",spath))
 
     @QtCore.pyqtSlot(QtCore.QModelIndex)
-    def on_listview_clicked(self, index):
+    def on_listview_doubleclicked(self, index):
         self.click_sound=QtGui.QSound("_click_.wav")
         self.click_sound.play()
         spath = QtCore.QString(self.filemodel.fileInfo(index).absoluteFilePath())
-        if os.path.isfile(spath):
-            os.startfile(spath)
+        if operator("check_file",spath):
+            operator("run",spath)
         else:
             self.listview.setRootIndex(self.filemodel.setRootPath(spath))
             self.addressbar.setText(spath)
@@ -191,6 +201,15 @@ class Filemanager(QtGui.QWidget):
         self.listview.setRootIndex(self.filemodel.setRootPath(spath))
         if self.backlst[len(self.backlst)-1] != spath:
             self.backlst.append(spath)
+        if len(spath)<4:
+            if spath == "":
+                self.statusbar.showMessage("")
+            else:
+                self.statusbar.showMessage(spath[0])
+        elif operator("check_file",spath):
+            self.statusbar.showMessage(spath.split("/")[-1]+"\tsize:\t"+operator("file_size",spath)+"Byte")
+        else:
+            self.statusbar.showMessage(spath.split("/")[-1]+"\titems:\t"+operator("folder_size",spath))
 
 
     def check_treeview(self):
@@ -205,10 +224,31 @@ class Filemanager(QtGui.QWidget):
         self.nextlst.append(self.backlst.pop())
         if len(self.backlst) < 1 :
             self.backlst.append("")
+
         else:
             spath = self.backlst[len(self.backlst)-1]
             self.listview.setRootIndex(self.filemodel.setRootPath(spath))
             self.addressbar.setText(spath)
+            if len(spath)<4:
+                if spath == "":
+                    self.statusbar.showMessage("")
+                else:
+                    self.statusbar.showMessage(spath[0])
+            elif operator("check_file",spath):
+                self.statusbar.showMessage(spath.split("/")[-1]+"\tsize:\t"+operator("file_size",spath)+"Byte")
+            else:
+                self.statusbar.showMessage(spath.split("/")[-1]+"\titems:\t"+operator("folder_size",spath))
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex)
+    def on_listview_clicked(self, index):
+        spath = QtCore.QString(self.filemodel.fileInfo(index).absoluteFilePath())
+        if len(spath)<4:
+            self.statusbar.showMessage(spath[0])
+        elif operator("check_file",spath):
+            self.statusbar.showMessage(spath.split("/")[-1]+"\tsize:\t"+operator("file_size",spath)+"Byte")
+        else:
+            self.statusbar.showMessage(spath.split("/")[-1]+"\titems:\t"+operator("folder_size",spath))
+
 ###################################
     def on_ctrl_pnl_clicked(self):
         self.click_sound=QtGui.QSound("_click_.wav")
@@ -230,6 +270,12 @@ class Filemanager(QtGui.QWidget):
             else:
                 self.listview.setRootIndex(self.filemodel.setRootPath(spath))
                 self.addressbar.setText(spath)
+            if len(spath)<4:
+                self.statusbar.showMessage(spath[0])
+            elif operator("check_file",spath):
+                self.statusbar.showMessage(spath.split("/")[-1]+"\tsize:\t"+operator("file_size",spath)+"Byte")
+            else:
+                self.statusbar.showMessage(spath.split("/")[-1]+"\titems:\t"+operator("folder_size",spath))
 
     def exit_clicked(self):
         self.click_sound=QtGui.QSound("_click_.wav")
@@ -239,7 +285,7 @@ class Filemanager(QtGui.QWidget):
     def new_win_clicked(self):
         self.click_sound=QtGui.QSound("_click_.wav")
         self.click_sound.play()
-        os.startfile("menu.py")
+        operator("run", "menu.py")
 
 def main():
     app = QtGui.QApplication(sys.argv)
