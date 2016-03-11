@@ -190,4 +190,23 @@ def operator(op, *args):
             print "couldn't operate"
 
 
+    if op == "cmd":
+        try:
+            os.chdir(args[0])
+            os.system('start')
+        except:
+            print "couldn't operate"
+
+
+    if op == "control_panel":
+        try:
+            os.system("control panel")
+        except:
+            print "couldn't operate"
+
+
+
+
+
+
     #this will be updated
