@@ -1,25 +1,10 @@
 import sys
 from PyQt4 import QtGui
 from PyQt4 import QtCore
-import os
 from op_method import operator
-import threading
 
 
-class MyThread(threading.Thread):
-    def __init__(self, func, args, name=''):
-        threading.Thread.__init__(self, name=name)
-        self.func = func
-        self.args = args
 
-    def run(self):
-        self.func(*self.args)
-'''
-t = MyThread(main)
-self.threads.append(t)
-self.threads[-1].start()
-'''
-#oon jayi ke ghrare window jadid baz beshe in se khat ro bezarid
 
 class Filemanager(QtGui.QWidget):
 
@@ -110,11 +95,10 @@ class Filemanager(QtGui.QWidget):
         self.new_folder.setIcon(QtGui.QIcon("folder-add.ico"))
         self.new_folder.setFixedWidth(100)
         self.new_folder.setToolTip("New Folder")
-        #self.new_folder.setStyleSheet("border: 0px")          #########
-        #self.del_folder.setStyleSheet("border: 0px")              ######
+
         tab1_vbox.addWidget(self.new_window)
         tab1_vbox.addWidget(self.new_folder)
-        #tab1_vbox.addWidget(self.del_folder)
+
         tab1_vbox.addWidget(self.control_panel)
         tab1_vbox.addWidget(self.cmd)
         tab1_vbox.addWidget(self.exit_btn)
@@ -167,7 +151,7 @@ class Filemanager(QtGui.QWidget):
 
         ###########################################################################################
         tab_widget.setFixedHeight(70)
-        #tab_widget.setFixedWidth(250)
+
         hbox.addWidget(tab_widget)
         vbox = QtGui.QHBoxLayout()
         back = QtGui.QPushButton()
@@ -206,21 +190,36 @@ class Filemanager(QtGui.QWidget):
         self.listview = QtGui.QListView()
         self.filemodel = QtGui.QFileSystemModel(self)
         self.filemodel.setRootPath(spath)
+
         self.listview.setModel(self.filemodel)
 
+        self.treeview.setAcceptDrops(True)
+        self.listview.setDragEnabled(True)
 
-        self.topright = QtGui.QFrame()
 
-        self.topright.setFrameShape(QtGui.QFrame.StyledPanel)
+
+
+
+
+
+
+
+
 
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
         self.splitter1.addWidget(self.treeview)
-        self.splitter1.setSizes([75, 200])
-        self.splitter2 = QtGui.QSplitter(QtCore.Qt.Vertical)
         self.splitter1.addWidget(self.listview)
-        self.splitter2.addWidget(self.splitter1)
+        self.splitter1.setSizes([75, 200])
+
+        self.splitter1.setAcceptDrops(True)
+        self.splitter1.installEventFilter(self)
+
+
+
+
+
         hbox.addLayout(vbox)
-        hbox.addWidget(self.splitter2)
+        hbox.addWidget(self.splitter1)
         QtGui.QApplication.setStyle(QtGui.QStyleFactory.create("Cleanlooks"))
 
 
@@ -244,6 +243,7 @@ class Filemanager(QtGui.QWidget):
         self.cut_btn.clicked.connect(self.cut_btn_clicked)
         self.paste_btn.clicked.connect(self.paste_btn_clicked)
         self.statusbar = QtGui.QStatusBar()
+        self.statusbar.setFixedHeight(20)
         hbox.addWidget(self.statusbar)
 
         self.setGeometry(100, 100, 700, 500)
@@ -402,7 +402,6 @@ class Filemanager(QtGui.QWidget):
         self.click_sound.play()
         try:
             if operator("check_file",str(self.temp_path)):
-                #operator("change_dir",str(self.temp_path))
                 operator("remove_file",str(self.temp_path))
 
                 print str(self.temp_path)
@@ -410,6 +409,7 @@ class Filemanager(QtGui.QWidget):
                 operator("remove_folder",str(self.temp_path))
         except:
             print "Coudn't open !"
+        self.statusbar.showMessage("")
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     def copy_btn_clicked(self):
@@ -459,6 +459,35 @@ class Filemanager(QtGui.QWidget):
                     print str(self.temp_path),str(tempdir)+'/'+text+str(operator("file_format",str(self.temp_path)))
             except:
                 print "Coudnt"
+        self.statusbar.showMessage("")
+    def eventFilter(self, object, event):
+        if (object is self.splitter1):
+            if (event.type() == QtCore.QEvent.DragEnter):
+                if event.mimeData().hasUrls():
+                    event.accept()
+                    print "accept"
+                else:
+                    event.ignore()
+                    print "ignore"
+            if (event.type() == QtCore.QEvent.Drop):
+                if event.mimeData().hasUrls():
+                    url = event.mimeData().urls()[0]
+                    self.drag_path = (str(url.toString()[8::]))
+                    self.drop_path =  str(self.temp_path)
+                    try:
+                        if operator("drive_name", self.drag_path)== operator("drive_name",self.drop_path):
+                            operator("move", self.drag_path, self.drop_path)
+                        else:
+                            if operator("check_dir",self.drag_path):
+                                operator("copy_folder",self.drag_path,self.drop_path+"/"+str(self.drag_path).split("/")[-1])
+                            else:
+                                operator("copy_file", self.drag_path,self.drop_path)
+                    except:
+                        print "couldn't opearate"
+
+
+            return False
+        return False
 
 def main():
     app = QtGui.QApplication(sys.argv)
