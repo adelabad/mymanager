@@ -17,15 +17,15 @@ class Filemanager(QtGui.QWidget):
         hbox = QtGui.QVBoxLayout()
         self.backlst = [""]
         self.nextlst = []
-        tab_widget = QtGui.QTabWidget()     # add tab
+        self.tab_widget = QtGui.QTabWidget()     # add tab
         tab1 = QtGui.QWidget()
         tab2 = QtGui.QWidget()
         tab3 = QtGui.QWidget()
         tab4= QtGui.QWidget()
-        tab_widget.addTab(tab1, "File")
-        tab_widget.addTab(tab2, "Edit")
-        tab_widget.addTab(tab3, "View")
-        tab_widget.addTab(tab4, "Search")
+        self.tab_widget.addTab(tab1, "File")
+        self.tab_widget.addTab(tab2, "Edit")
+        self.tab_widget.addTab(tab3, "View")
+        self.tab_widget.addTab(tab4, "Search")
         #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         self.tree_state = QtGui.QCheckBox()
         self.tree_state.setText("TreeView")
@@ -91,6 +91,11 @@ class Filemanager(QtGui.QWidget):
         self.control_panel.setFixedWidth(100)
         self.control_panel.setToolTip("Control Panel")
 
+        self.desktop = QtGui.QPushButton("Desktop")
+        self.desktop.setIcon(QtGui.QIcon("desktop.jpg"))
+        self.desktop.setFixedWidth(70)
+        self.desktop.setToolTip("Desktop")
+
         self.new_folder = QtGui.QPushButton("New Folder")      #######
         self.new_folder.setIcon(QtGui.QIcon("folder-add.ico"))
         self.new_folder.setFixedWidth(100)
@@ -101,6 +106,7 @@ class Filemanager(QtGui.QWidget):
 
         tab1_vbox.addWidget(self.control_panel)
         tab1_vbox.addWidget(self.cmd)
+        tab1_vbox.addWidget(self.desktop)
         tab1_vbox.addWidget(self.exit_btn)
 
         tab1_vbox.addWidget(empty_lbl)
@@ -150,9 +156,11 @@ class Filemanager(QtGui.QWidget):
 
 
         ###########################################################################################
-        tab_widget.setFixedHeight(70)
-
-        hbox.addWidget(tab_widget)
+        self.tab_widget.setFixedHeight(70)
+        self.shtab = QtGui.QPushButton("Show/Hide Tab")
+        self.seentab = True
+        hbox.addWidget(self.tab_widget)
+        hbox.addWidget(self.shtab)
         vbox = QtGui.QHBoxLayout()
         back = QtGui.QPushButton()
         back.setFixedWidth(30)
@@ -242,6 +250,8 @@ class Filemanager(QtGui.QWidget):
         self.rename_btn.clicked.connect(self.rename_btn_clicked)
         self.cut_btn.clicked.connect(self.cut_btn_clicked)
         self.paste_btn.clicked.connect(self.paste_btn_clicked)
+        self.desktop.clicked.connect(self.desktop_btn_clicked)
+        self.shtab.clicked.connect(self.shtab_btn_clicked)
         self.listview.contextMenuPolicy()
         self.statusbar = QtGui.QStatusBar()
         self.statusbar.setFixedHeight(20)
@@ -518,6 +528,22 @@ class Filemanager(QtGui.QWidget):
         self.menu.addAction(renameAction)
 
         self.menu.popup(QtGui.QCursor.pos())
+
+    def desktop_btn_clicked(self):
+        spath = operator("desktop_adr")
+        self.listview.setRootIndex(self.filemodel.setRootPath(spath))
+        if self.backlst[len(self.backlst)-1] != spath:
+                self.backlst.append(spath)
+        self.statusbar.showMessage(spath.split("/")[-1]+"\titems:\t"+operator("folder_size",spath))
+        self.addressbar.setText(spath)
+
+    def shtab_btn_clicked(self):
+        if self.seentab:
+            self.seentab = False
+            self.tab_widget.hide()
+        else:
+            self.seentab = True
+            self.tab_widget.show()
 
 def main():
     app = QtGui.QApplication(sys.argv)

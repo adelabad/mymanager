@@ -210,5 +210,12 @@ def operator(op, *args):
             print "couldn't operate"
 
 
+    if op == "desktop_adr":
+        try:
+            return os.path.expanduser("~")+"\Desktop"
+        except:
+            print "couldn't"
+
+
 
     #this will be updated
