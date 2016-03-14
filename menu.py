@@ -242,6 +242,7 @@ class Filemanager(QtGui.QWidget):
         self.rename_btn.clicked.connect(self.rename_btn_clicked)
         self.cut_btn.clicked.connect(self.cut_btn_clicked)
         self.paste_btn.clicked.connect(self.paste_btn_clicked)
+        self.listview.contextMenuPolicy()
         self.statusbar = QtGui.QStatusBar()
         self.statusbar.setFixedHeight(20)
         hbox.addWidget(self.statusbar)
@@ -390,10 +391,13 @@ class Filemanager(QtGui.QWidget):
             'Enter Folder Name:')
 
         if ok:
-            if self.addressbar.text()[-1] != "\\":
-                operator("new_fd",str(self.addressbar.text())+"\\"+str(text))
-            else:
-                operator("new_fd",str(self.addressbar.text())+str(text))
+            try:
+                if self.addressbar.text()[-1] != "\\":
+                    operator("new_fd",str(self.addressbar.text())+"\\"+str(text))
+                else:
+                    operator("new_fd",str(self.addressbar.text())+str(text))
+            except:
+                print "cannot create a new folder"
 
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -488,6 +492,32 @@ class Filemanager(QtGui.QWidget):
 
             return False
         return False
+
+    def contextMenuEvent(self, event):
+        self.menu = QtGui.QMenu(self)
+        renameAction = QtGui.QAction('Rename', self)
+        copyAction = QtGui.QAction("Copy",self)
+        cutAction = QtGui.QAction("Cut",self)
+        pasteAction = QtGui.QAction("Paste",self)
+        deleteAction = QtGui.QAction("Delete",self)
+        newwindowAction = QtGui.QAction("New Window",self)
+        newfolderAction = QtGui.QAction("New Folder",self)
+        renameAction.triggered.connect(self.rename_btn_clicked)
+        copyAction.triggered.connect(self.copy_btn_clicked)
+        cutAction.triggered.connect(self.cut_btn_clicked)
+        pasteAction.triggered.connect(self.paste_btn_clicked)
+        deleteAction.triggered.connect(self.remove_btn_clicked)
+        newwindowAction.triggered.connect(self.new_win_clicked)
+        newfolderAction.triggered.connect(self.new_folder_clicked)
+        self.menu.addAction(newwindowAction)
+        self.menu.addAction(newfolderAction)
+        self.menu.addAction(copyAction)
+        self.menu.addAction(cutAction)
+        self.menu.addAction(pasteAction)
+        self.menu.addAction(deleteAction)
+        self.menu.addAction(renameAction)
+
+        self.menu.popup(QtGui.QCursor.pos())
 
 def main():
     app = QtGui.QApplication(sys.argv)
