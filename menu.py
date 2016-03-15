@@ -92,7 +92,7 @@ class Filemanager(QtGui.QWidget):
         self.control_panel.setToolTip("Control Panel")
 
         self.desktop = QtGui.QPushButton("Desktop")
-        self.desktop.setIcon(QtGui.QIcon("desktop.jpg"))
+        self.desktop.setIcon(QtGui.QIcon("desktop.ico"))
         self.desktop.setFixedWidth(70)
         self.desktop.setToolTip("Desktop")
 
@@ -252,7 +252,8 @@ class Filemanager(QtGui.QWidget):
         self.paste_btn.clicked.connect(self.paste_btn_clicked)
         self.desktop.clicked.connect(self.desktop_btn_clicked)
         self.shtab.clicked.connect(self.shtab_btn_clicked)
-        self.listview.contextMenuPolicy()
+        self.listview.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listview.connect(self.listview,QtCore.SIGNAL("customContextMenuRequested(QPoint)"),self.acontextMenuEvent)
         self.statusbar = QtGui.QStatusBar()
         self.statusbar.setFixedHeight(20)
         hbox.addWidget(self.statusbar)
@@ -503,8 +504,8 @@ class Filemanager(QtGui.QWidget):
             return False
         return False
 
-    def contextMenuEvent(self, event):
-        self.menu = QtGui.QMenu(self)
+    def acontextMenuEvent(self):
+        self.menu = QtGui.QMenu()
         renameAction = QtGui.QAction('Rename', self)
         copyAction = QtGui.QAction("Copy",self)
         cutAction = QtGui.QAction("Cut",self)
@@ -526,7 +527,6 @@ class Filemanager(QtGui.QWidget):
         self.menu.addAction(pasteAction)
         self.menu.addAction(deleteAction)
         self.menu.addAction(renameAction)
-
         self.menu.popup(QtGui.QCursor.pos())
 
     def desktop_btn_clicked(self):
