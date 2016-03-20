@@ -153,6 +153,10 @@ class Filemanager(QtGui.QWidget):
 
         back.clicked.connect(self.back_clicked)
         next.clicked.connect(self.next_clicked)
+        self.control_panel.clicked.connect(self.on_ctrl_pnl_clicked)
+        self.cmd.clicked.connect(self.on_cmd_clicked)
+        self.exit_btn.clicked.connect(self.exit_clicked)
+        self.new_window.clicked.connect(self.new_win_clicked)
 
         self.setGeometry(100, 100, 700, 500)
         self.setWindowTitle('FileManager')
@@ -205,8 +209,16 @@ class Filemanager(QtGui.QWidget):
             spath = self.backlst[len(self.backlst)-1]
             self.listview.setRootIndex(self.filemodel.setRootPath(spath))
             self.addressbar.setText(spath)
-
-
+###################################
+    def on_ctrl_pnl_clicked(self):
+        self.click_sound=QtGui.QSound("_click_.wav")
+        self.click_sound.play()
+        os.system('control.exe')
+    def on_cmd_clicked(self,spath):
+        self.click_sound=QtGui.QSound("_click_.wav")
+        self.click_sound.play()
+#        cmd = 'ls -al'
+        os.system("start")
 
     def next_clicked(self):
         self.click_sound=QtGui.QSound("_click_.wav")
@@ -219,8 +231,19 @@ class Filemanager(QtGui.QWidget):
                 self.listview.setRootIndex(self.filemodel.setRootPath(spath))
                 self.addressbar.setText(spath)
 
+    def exit_clicked(self):
+        self.click_sound=QtGui.QSound("_click_.wav")
+        self.click_sound.play()
+        QtGui.QApplication.quit()
+
+    def new_win_clicked(self):
+        self.click_sound=QtGui.QSound("_click_.wav")
+        self.click_sound.play()
+        os.startfile("menu.py")
+
 def main():
     app = QtGui.QApplication(sys.argv)
+
     win = Filemanager()
     sys.exit(app.exec_())
 
