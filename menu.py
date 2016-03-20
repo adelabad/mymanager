@@ -28,21 +28,27 @@ class Filemanager(QtGui.QWidget):
         box = QtGui.QVBoxLayout()
         box.addWidget(self.check_close)
         tab3.setLayout(box)
+
+        empty_lbl=QtGui.QLabel()
+        #empty_lbl.setFixedWidth(500)
+
         tab1_vbox = QtGui.QHBoxLayout()
         self.new_folder = QtGui.QPushButton("New Folder")      #######
         self.new_folder.setIcon(QtGui.QIcon("folder-add.ico"))
         self.new_folder.setFixedWidth(100)
         self.new_folder.setToolTip("New Folder")
-        self.new_folder.setStyleSheet("border: 0px")          #########
+        #self.new_folder.setStyleSheet("border: 0px")          #########
         self.del_folder = QtGui.QPushButton("Delete Folder")     #########
         self.del_folder.setIcon(QtGui.QIcon("folder-delete.ico"))
         self.del_folder.setFixedWidth(100)
         self.del_folder.setToolTip("Delete Folder")
-        self.del_folder.setStyleSheet("border: 0px")              ######
+        #self.del_folder.setStyleSheet("border: 0px")              ######
         tab1_vbox.addWidget(self.new_folder)
         tab1_vbox.addWidget(self.del_folder)
+        tab1_vbox.addWidget(empty_lbl)
         tab1.setLayout(tab1_vbox)
-        tab_widget.setFixedHeight(100)
+        tab_widget.setFixedHeight(70)
+        #tab_widget.setFixedWidth(250)
         hbox.addWidget(tab_widget)
         vbox = QtGui.QHBoxLayout()
         back = QtGui.QPushButton()
