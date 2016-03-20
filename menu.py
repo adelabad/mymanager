@@ -7,13 +7,13 @@ import threading
 
 
 class MyThread(threading.Thread):
-    def __init__(self, func, name=''):
+    def __init__(self, func, args, name=''):
         threading.Thread.__init__(self, name=name)
         self.func = func
+        self.args = args
 
     def run(self):
-        self.func()
-
+        self.func(*self.args)
 '''
 t = MyThread(main)
 self.threads.append(t)
@@ -26,7 +26,6 @@ class Filemanager(QtGui.QWidget):
     def __init__(self):
         super(Filemanager, self).__init__()
         self.initui()
-        self.threads = []
 
     def initui(self):
 
@@ -51,7 +50,28 @@ class Filemanager(QtGui.QWidget):
         empty_lbl=QtGui.QLabel()
         #empty_lbl.setFixedWidth(500)
 
+
         tab1_vbox = QtGui.QHBoxLayout()
+        self.new_window=QtGui.QPushButton("New Window")
+        self.new_window.setIcon(QtGui.QIcon("new_window.ico"))
+        self.new_window.setFixedWidth(100)
+        self.new_window.setToolTip("New Window")
+
+        self.exit_btn=QtGui.QPushButton("Exit")
+        self.exit_btn.setIcon(QtGui.QIcon("exit.ico"))
+        self.exit_btn.setFixedWidth(50)
+        self.exit_btn.setToolTip("Exit")
+
+        self.cmd=QtGui.QPushButton("Command Promote")
+        self.cmd.setIcon(QtGui.QIcon("command.ico"))
+        self.cmd.setFixedWidth(120)
+        self.cmd.setToolTip("Command Promote")
+
+        self.control_panel=QtGui.QPushButton("Control Panel")
+        self.control_panel.setIcon(QtGui.QIcon("Control_Panel.ico"))
+        self.control_panel.setFixedWidth(100)
+        self.control_panel.setToolTip("Control Panel")
+
         self.new_folder = QtGui.QPushButton("New Folder")      #######
         self.new_folder.setIcon(QtGui.QIcon("folder-add.ico"))
         self.new_folder.setFixedWidth(100)
@@ -62,8 +82,13 @@ class Filemanager(QtGui.QWidget):
         self.del_folder.setFixedWidth(100)
         self.del_folder.setToolTip("Delete Folder")
         #self.del_folder.setStyleSheet("border: 0px")              ######
+        tab1_vbox.addWidget(self.new_window)
         tab1_vbox.addWidget(self.new_folder)
         tab1_vbox.addWidget(self.del_folder)
+        tab1_vbox.addWidget(self.control_panel)
+        tab1_vbox.addWidget(self.cmd)
+        tab1_vbox.addWidget(self.exit_btn)
+
         tab1_vbox.addWidget(empty_lbl)
         tab1.setLayout(tab1_vbox)
         tab_widget.setFixedHeight(70)
@@ -91,6 +116,8 @@ class Filemanager(QtGui.QWidget):
         vbox.addWidget(self.searchbar)########
         vbox.addWidget(self.combo)######
         self.searchbar.setFixedWidth(150)########
+
+
 
         self.treeview = QtGui.QTreeView()
         spath = QtCore.QString("")
