@@ -109,6 +109,8 @@ class Filemanager(QtGui.QWidget):
 
     @QtCore.pyqtSlot(QtCore.QModelIndex)
     def on_treeview_clicked(self, index):
+        self.click_sound=QtGui.QSound("_click_.wav")
+        self.click_sound.play()
         spath = QtCore.QString(self.dirmodel.fileInfo(index).absoluteFilePath())
         self.listview.setRootIndex(self.filemodel.setRootPath(spath))
         self.addressbar.setText(spath)
@@ -117,6 +119,8 @@ class Filemanager(QtGui.QWidget):
 
     @QtCore.pyqtSlot(QtCore.QModelIndex)
     def on_listview_clicked(self, index):
+        self.click_sound=QtGui.QSound("_click_.wav")
+        self.click_sound.play()
         spath = QtCore.QString(self.filemodel.fileInfo(index).absoluteFilePath())
         if os.path.isfile(spath):
             os.startfile(spath)
@@ -140,7 +144,7 @@ class Filemanager(QtGui.QWidget):
             self.splitter1.setSizes([0, 200])
 
     def back_clicked(self):
-        self.click_sound=QtGui.QSound("_click_.MP3")
+        self.click_sound=QtGui.QSound("_click_.wav")
         self.click_sound.play()
         self.nextlst.append(self.backlst.pop())
         if len(self.backlst) < 1 :
@@ -153,7 +157,7 @@ class Filemanager(QtGui.QWidget):
 
 
     def next_clicked(self):
-        self.click_sound=QtGui.QSound("_click_.MP3")
+        self.click_sound=QtGui.QSound("_click_.wav")
         self.click_sound.play()
         if len(self.nextlst) > 0:
             spath = self.nextlst.pop()
