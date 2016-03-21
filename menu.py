@@ -206,11 +206,14 @@ class Filemanager(QtGui.QWidget):
                 self.statusbar.showMessage("")
             else:
                 self.statusbar.showMessage(spath[0])
-        elif operator("check_file",spath):
-            self.statusbar.showMessage(spath.split("/")[-1]+"\tsize:\t"+operator("file_size",spath)+"Byte")
-        else:
-            self.statusbar.showMessage(spath.split("/")[-1]+"\titems:\t"+operator("folder_size",spath))
-
+        else :
+            try :
+                if operator("check_file",spath):
+                    self.statusbar.showMessage(spath.split("/")[-1]+"\tsize:\t"+operator("file_size",spath)+"Byte")
+                else:
+                    self.statusbar.showMessage(spath.split("/")[-1]+"\titems:\t"+operator("folder_size",spath))
+            except :
+                print ""
 
     def check_treeview(self):
         if self.check_close.checkState():
