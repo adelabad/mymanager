@@ -121,6 +121,7 @@ class Filemanager(QtGui.QWidget):
 
         self.treeview = QtGui.QTreeView()
         spath = QtCore.QString("")
+        self.mypath=spath
         self.dirmodel = QtGui.QFileSystemModel(self)
         self.dirmodel.setFilter(QtCore.QDir.AllDirs | QtCore.QDir.NoDotAndDotDot)
         self.dirmodel.setRootPath(spath)
@@ -158,6 +159,7 @@ class Filemanager(QtGui.QWidget):
         self.cmd.clicked.connect(self.on_cmd_clicked)
         self.exit_btn.clicked.connect(self.exit_clicked)
         self.new_window.clicked.connect(self.new_win_clicked)
+        self.new_folder.clicked.connect(self.new_folder_clicked)
 
         self.statusbar = QtGui.QStatusBar()
         hbox.addWidget(self.statusbar)
@@ -289,6 +291,16 @@ class Filemanager(QtGui.QWidget):
         self.click_sound=QtGui.QSound("_click_.wav")
         self.click_sound.play()
         operator("run", "menu.py")
+
+    def new_folder_clicked(self):
+        self.click_sound=QtGui.QSound("_click_.wav")
+        self.click_sound.play()
+        text, ok = QtGui.QInputDialog.getText(self, 'Input Dialog',
+            'Enter Folder Name:')
+
+        if ok:
+            operator("new_fd",str(self.addressbar.text())+str(text))
+
 
 def main():
     app = QtGui.QApplication(sys.argv)
