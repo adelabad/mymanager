@@ -253,7 +253,7 @@ class Filemanager(QtGui.QWidget):
     def on_ctrl_pnl_clicked(self):
         self.click_sound=QtGui.QSound("_click_.wav")
         self.click_sound.play()
-        os.system('control.exe')
+        operator("control_panel")
     def on_cmd_clicked(self,spath):
         self.click_sound=QtGui.QSound("_click_.wav")
         self.click_sound.play()
