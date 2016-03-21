@@ -2,7 +2,7 @@ import sys
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 import os
-from op_method import *
+from op_method import operator
 import threading
 
 
@@ -257,8 +257,7 @@ class Filemanager(QtGui.QWidget):
     def on_cmd_clicked(self,spath):
         self.click_sound=QtGui.QSound("_click_.wav")
         self.click_sound.play()
-#        cmd = 'ls -al'
-        os.system("start")
+        operator("cmd",str(self.addressbar.text()))
 
     def next_clicked(self):
         self.click_sound=QtGui.QSound("_click_.wav")
