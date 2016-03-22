@@ -36,15 +36,17 @@ class Filemanager(QtGui.QWidget):
         tab1 = QtGui.QWidget()
         tab2 = QtGui.QWidget()
         tab3 = QtGui.QWidget()
+        tab4= QtGui.QWidget()
         tab_widget.addTab(tab1, "File")
         tab_widget.addTab(tab2, "Edit")
         tab_widget.addTab(tab3, "View")
-        self.check_close = QtGui.QCheckBox()
-        self.check_close.setText("TreeView")
-        self.check_close.setFixedWidth(66)
-        self.check_close.setChecked(True)
+        tab_widget.addTab(tab4, "Search")
+        self.tree_state = QtGui.QCheckBox()
+        self.tree_state.setText("TreeView")
+        self.tree_state.setFixedWidth(66)
+        self.tree_state.setChecked(True)
         box = QtGui.QVBoxLayout()
-        box.addWidget(self.check_close)
+        box.addWidget(self.tree_state)
         tab3.setLayout(box)
 
         empty_lbl=QtGui.QLabel()
@@ -176,23 +178,26 @@ class Filemanager(QtGui.QWidget):
         self.listview.setModel(self.filemodel)
 
 
-        topright = QtGui.QFrame()
-        topright.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.topright = QtGui.QFrame()
+
+        self.topright.setFrameShape(QtGui.QFrame.StyledPanel)
 
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
         self.splitter1.addWidget(self.treeview)
         self.splitter1.setSizes([75, 200])
-        splitter2 = QtGui.QSplitter(QtCore.Qt.Vertical)
+        self.splitter2 = QtGui.QSplitter(QtCore.Qt.Vertical)
         self.splitter1.addWidget(self.listview)
-        splitter2.addWidget(self.splitter1)
+        self.splitter2.addWidget(self.splitter1)
         hbox.addLayout(vbox)
-        hbox.addWidget(splitter2)
+        hbox.addWidget(self.splitter2)
         QtGui.QApplication.setStyle(QtGui.QStyleFactory.create("Cleanlooks"))
 
+
+        self.splitter1.splitterMoved.connect(self.tick_splitter)
         self.treeview.clicked.connect(self.on_treeview_clicked)
         self.listview.doubleClicked.connect(self.on_listview_doubleclicked)
         self.addressbar.textChanged.connect(self.address_changed)
-        self.check_close.clicked.connect(self.check_treeview)
+        self.tree_state.clicked.connect(self.check_treeview)
         self.listview.clicked.connect(self.on_listview_clicked)
 
         back.clicked.connect(self.back_clicked)
@@ -264,8 +269,16 @@ class Filemanager(QtGui.QWidget):
                 except :
                     print ""
 
+    def tick_splitter(self):
+        if self.treeview.width()>0  :
+            self.tree_state.setChecked(True)
+
+        else :
+            self.tree_state.setChecked(False)
+
+
     def check_treeview(self):
-        if self.check_close.checkState():
+        if self.tree_state.checkState():
             self.splitter1.setSizes([75, 200])
         else:
             self.splitter1.setSizes([0, 200])
