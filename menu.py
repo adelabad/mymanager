@@ -48,6 +48,7 @@ class Filemanager(QtGui.QWidget):
         tab3.setLayout(box)
 
         empty_lbl=QtGui.QLabel()
+        empty_lbl2=QtGui.QLabel()
         #empty_lbl.setFixedWidth(500)
 
         ##############################################################
@@ -77,14 +78,10 @@ class Filemanager(QtGui.QWidget):
         self.new_folder.setFixedWidth(100)
         self.new_folder.setToolTip("New Folder")
         #self.new_folder.setStyleSheet("border: 0px")          #########
-        self.del_folder = QtGui.QPushButton("Delete Folder")     #########
-        self.del_folder.setIcon(QtGui.QIcon("folder-delete.ico"))
-        self.del_folder.setFixedWidth(100)
-        self.del_folder.setToolTip("Delete Folder")
         #self.del_folder.setStyleSheet("border: 0px")              ######
         tab1_vbox.addWidget(self.new_window)
         tab1_vbox.addWidget(self.new_folder)
-        tab1_vbox.addWidget(self.del_folder)
+        #tab1_vbox.addWidget(self.del_folder)
         tab1_vbox.addWidget(self.control_panel)
         tab1_vbox.addWidget(self.cmd)
         tab1_vbox.addWidget(self.exit_btn)
@@ -94,30 +91,30 @@ class Filemanager(QtGui.QWidget):
         #################################################################################
         tab2_vbox = QtGui.QHBoxLayout()
         self.copy_btn=QtGui.QPushButton("Copy")
-        #self.new_window.setIcon(QtGui.QIcon("new_window.ico"))
-        self.copy_btn.setFixedWidth(100)
+        self.copy_btn.setIcon(QtGui.QIcon("copy.ico"))
+        self.copy_btn.setFixedWidth(60)
         self.copy_btn.setToolTip("Copy")
 
         self.paste_btn=QtGui.QPushButton("Paste")
-        #self.exit_btn.setIcon(QtGui.QIcon("exit.ico"))
-        self.paste_btn.setFixedWidth(50)
+        self.paste_btn.setIcon(QtGui.QIcon("paste.ico"))
+        self.paste_btn.setFixedWidth(60)
         self.paste_btn.setToolTip("Paste")
 
         self.cut_btn=QtGui.QPushButton("Cut")
-        #self.cmd.setIcon(QtGui.QIcon("command.ico"))
-        self.cut_btn.setFixedWidth(120)
+        self.cut_btn.setIcon(QtGui.QIcon("cut.ico"))
+        self.cut_btn.setFixedWidth(50)
         self.cut_btn.setToolTip("Cut")
 
         self.rename_btn=QtGui.QPushButton("Rename")
-        #self.control_panel.setIcon(QtGui.QIcon("Control_Panel.ico"))
-        self.rename_btn.setFixedWidth(100)
+        self.rename_btn.setIcon(QtGui.QIcon("rename.ico"))
+        self.rename_btn.setFixedWidth(70)
         self.rename_btn.setToolTip("Rename")
 
 
         self.remove_btn=QtGui.QPushButton("Remove")
-        #self.control_panel.setIcon(QtGui.QIcon("Control_Panel.ico"))
-        self.rename_btn.setFixedWidth(100)
-        self.rename_btn.setToolTip("Remove")
+        self.remove_btn.setIcon(QtGui.QIcon("del.ico"))
+        self.remove_btn.setFixedWidth(75)
+        self.remove_btn.setToolTip("Remove")
 
 
         tab2_vbox.addWidget(self.copy_btn)
@@ -125,7 +122,7 @@ class Filemanager(QtGui.QWidget):
         tab2_vbox.addWidget(self.paste_btn)
         tab2_vbox.addWidget(self.rename_btn)
         tab2_vbox.addWidget(self.remove_btn)
-        tab2_vbox.addWidget(empty_lbl)
+        tab2_vbox.addWidget(empty_lbl2)
         tab2.setLayout(tab2_vbox)
 
 
