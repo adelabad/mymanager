@@ -41,6 +41,7 @@ class Filemanager(QtGui.QWidget):
         tab_widget.addTab(tab2, "Edit")
         tab_widget.addTab(tab3, "View")
         tab_widget.addTab(tab4, "Search")
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         self.tree_state = QtGui.QCheckBox()
         self.tree_state.setText("TreeView")
         self.tree_state.setFixedWidth(66)
@@ -48,11 +49,41 @@ class Filemanager(QtGui.QWidget):
         box = QtGui.QVBoxLayout()
         box.addWidget(self.tree_state)
         tab3.setLayout(box)
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        self.complete_file_search= QtGui.QCheckBox()
+        self.complete_file_search.setText("Complete Filename Search")
+        self.complete_file_search.setFixedWidth(150)
+        self.complete_file_search.setChecked(True)
+        box2 = QtGui.QHBoxLayout()
+        box2.addWidget(self.complete_file_search)
+        tab4.setLayout(box2)
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        self.exact_file_search= QtGui.QCheckBox()
+        self.exact_file_search.setText("Exact Filename Search")
+        self.exact_file_search.setFixedWidth(130)
+        self.exact_file_search.setChecked(False)
+
+        box2.addWidget(self.exact_file_search)
+
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        self.complete_folder_search= QtGui.QCheckBox()
+        self.complete_folder_search.setText("Complete Foldername Search")
+        self.complete_folder_search .setFixedWidth(165)
+        self.complete_folder_search.setChecked(False)
+        box2.addWidget(self.complete_folder_search)
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        self.exact_folder_search= QtGui.QCheckBox()
+        self.exact_folder_search.setText("Exact Foldername Search")
+        self.exact_folder_search.setFixedWidth(150)
+        self.exact_folder_search.setChecked(False)
+        box2.addWidget(self.exact_folder_search)
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        tab4.setLayout(box2)
 
         empty_lbl=QtGui.QLabel()
         empty_lbl2=QtGui.QLabel()
-        #empty_lbl.setFixedWidth(500)
-
+        empty_lbl3=QtGui.QLabel()
+        box2.addWidget(empty_lbl3)
         ##############################################################
         tab1_vbox = QtGui.QHBoxLayout()
         self.new_window=QtGui.QPushButton("New Window")
