@@ -2,9 +2,8 @@ import sys
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 from op_method import operator
-
-
-
+from run import *
+from browser import *
 
 class Filemanager(QtGui.QWidget):
 
@@ -13,7 +12,8 @@ class Filemanager(QtGui.QWidget):
         self.initui()
 
     def initui(self):
-
+        self.temp_path=""
+        self.list_data=[]
         hbox = QtGui.QVBoxLayout()
         self.backlst = [""]
         self.nextlst = []
@@ -39,6 +39,7 @@ class Filemanager(QtGui.QWidget):
         self.complete_file_search.setText("Complete Filename Search")
         self.complete_file_search.setFixedWidth(150)
         self.complete_file_search.setChecked(True)
+        self.complete_file_search.stateChanged.connect(self.search_func)
         box2 = QtGui.QHBoxLayout()
         box2.addWidget(self.complete_file_search)
         tab4.setLayout(box2)
@@ -47,6 +48,7 @@ class Filemanager(QtGui.QWidget):
         self.exact_file_search.setText("Exact Filename Search")
         self.exact_file_search.setFixedWidth(130)
         self.exact_file_search.setChecked(False)
+        self.exact_file_search.stateChanged.connect(self.search_func)
 
         box2.addWidget(self.exact_file_search)
 
@@ -55,12 +57,14 @@ class Filemanager(QtGui.QWidget):
         self.complete_folder_search.setText("Complete Foldername Search")
         self.complete_folder_search .setFixedWidth(165)
         self.complete_folder_search.setChecked(False)
+        self.complete_folder_search.stateChanged.connect(self.search_func)
         box2.addWidget(self.complete_folder_search)
         #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         self.exact_folder_search= QtGui.QCheckBox()
         self.exact_folder_search.setText("Exact Foldername Search")
         self.exact_folder_search.setFixedWidth(150)
         self.exact_folder_search.setChecked(False)
+        self.exact_folder_search.stateChanged.connect(self.search_func)
         box2.addWidget(self.exact_folder_search)
         #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         tab4.setLayout(box2)
@@ -148,13 +152,6 @@ class Filemanager(QtGui.QWidget):
         tab2_vbox.addWidget(empty_lbl2)
         tab2.setLayout(tab2_vbox)
 
-
-
-
-
-
-
-
         ###########################################################################################
         self.tab_widget.setFixedHeight(70)
         self.shtab = QtGui.QPushButton("Show/Hide Tab")
@@ -175,7 +172,7 @@ class Filemanager(QtGui.QWidget):
 
         self.combo = QtGui.QComboBox(self)#####
         self.combo.addItem("System Search")####
-        self.combo.addItem("Web Search")#######
+        self.combo.addItem("Google Search")#######
 
         vbox.addWidget(back)
         vbox.addWidget(next)
@@ -183,8 +180,6 @@ class Filemanager(QtGui.QWidget):
         vbox.addWidget(self.searchbar)########
         vbox.addWidget(self.combo)######
         self.searchbar.setFixedWidth(150)########
-
-
 
         self.treeview = QtGui.QTreeView()
         spath = QtCore.QString("")
@@ -203,17 +198,6 @@ class Filemanager(QtGui.QWidget):
 
         self.treeview.setAcceptDrops(True)
         self.listview.setDragEnabled(True)
-
-
-
-
-
-
-
-
-
-
-
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
         self.splitter1.addWidget(self.treeview)
         self.splitter1.addWidget(self.listview)
@@ -221,11 +205,6 @@ class Filemanager(QtGui.QWidget):
 
         self.splitter1.setAcceptDrops(True)
         self.splitter1.installEventFilter(self)
-
-
-
-
-
         hbox.addLayout(vbox)
         hbox.addWidget(self.splitter1)
         QtGui.QApplication.setStyle(QtGui.QStyleFactory.create("Cleanlooks"))
@@ -237,7 +216,11 @@ class Filemanager(QtGui.QWidget):
         self.addressbar.textChanged.connect(self.address_changed)
         self.tree_state.clicked.connect(self.check_treeview)
         self.listview.clicked.connect(self.on_listview_clicked)
-
+        self.num=1
+        self.search_list=QtGui.QListWidget()
+        self.searchbar.textEdited.connect(self.search_func)
+        self.combo.currentIndexChanged.connect(self.search_func)
+        self.searchbar.textChanged.connect(self.search_func)
         back.clicked.connect(self.back_clicked)
         next.clicked.connect(self.next_clicked)
         self.control_panel.clicked.connect(self.on_ctrl_pnl_clicked)
@@ -258,6 +241,7 @@ class Filemanager(QtGui.QWidget):
         self.statusbar.setFixedHeight(20)
         hbox.addWidget(self.statusbar)
 
+        self.searchbar.returnPressed.connect(self.search_func)
         self.setGeometry(100, 100, 700, 500)
         self.setWindowTitle('FileManager')
         self.setLayout(hbox)
@@ -292,6 +276,11 @@ class Filemanager(QtGui.QWidget):
             if self.backlst[len(self.backlst)-1] != spath:
                 self.backlst.append(spath)
 
+    def on_search_view_clicked(self):
+        self.click_sound=QtGui.QSound("_click_.wav")
+        self.click_sound.play()
+
+
     def address_changed(self):
         spath = self.addressbar.text()
         if operator("check_path", spath) or spath == "":
@@ -311,6 +300,79 @@ class Filemanager(QtGui.QWidget):
                         self.statusbar.showMessage(spath.split("/")[-1]+"\titems:\t"+operator("folder_size",spath))
                 except :
                     print ""
+    def refresh_search(self):
+        self.searchbar.clear()
+
+
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex)
+    def search_func(self):
+        self.combo.currentIndexChanged.connect(self.refresh_search)
+        #self.searchbar.clear()
+        if (self.combo.currentText()=="System Search"):
+
+            self.combo.currentIndexChanged.connect(self.refresh_search)
+            searchpath=self.searchbar.text()
+            self.flag=False
+            #self.searchbar.textChanged.connect(self.refresh_search)
+            if (not self.complete_file_search.isChecked()) and (not self.exact_file_search.isChecked()) and (not self.complete_folder_search.isChecked()) and (not self.exact_folder_search.isChecked()):
+                self.search_list.clear()
+            if not self.flag :
+                self.splitter1.addWidget(self.search_list)
+                self.flag=True
+                if self.complete_file_search.isChecked():
+                    self.exact_file_search.setChecked(False)
+                    self.complete_folder_search.setChecked(False)
+                    self.exact_folder_search.setChecked(False)
+                    self.search_list.clear()
+                    self.list_data=operator("file_search_all",str(self.temp_path),str(searchpath))
+                if self.exact_file_search.isChecked():
+                    self.complete_file_search.setChecked(False)
+                    self.complete_folder_search.setChecked(False)
+                    self.exact_folder_search.setChecked(False)
+                    self.search_list.clear()
+                    self.list_data=operator("file_search_exact",str(self.temp_path),str(searchpath))
+                if self.complete_folder_search.isChecked():
+                    self.exact_file_search.setChecked(False)
+                    self.complete_file_search.setChecked(False)
+                    self.exact_folder_search.setChecked(False)
+                    self.search_list.clear()
+                    self.list_data=operator("folder_search_all",str(self.temp_path),str(searchpath))
+                if self.exact_folder_search.isChecked():
+                    self.exact_file_search.setChecked(False)
+                    self.complete_folder_search.setChecked(False)
+                    self.complete_file_search.setChecked(False)
+                    self.search_list.clear()
+                    self.list_data=operator("folder_search_exact",str(self.temp_path),str(searchpath))
+
+            try :
+                for i in range (len(self.list_data)):
+                    items=self.search_list.findItems('', QtCore.Qt.MatchRegExp)
+                    if not (self.list_data[i] in items ) :
+                        self.search_list.addItem(self.list_data[i])
+                if (not self.complete_file_search.isChecked()) and (not self.exact_file_search.isChecked()) and (not self.complete_folder_search.isChecked()) and (not self.exact_folder_search.isChecked()):
+                    self.search_list.clear()
+            except:
+                "coudnt found !"
+
+            if str(searchpath)=="" and self.flag:
+                self.search_list.hide()
+                self.flag=False
+                self.search_list=QtGui.QListWidget()
+
+        elif (self.combo.currentText()=="Google Search"):
+            search_add=self.addressbar.text()
+            self.combo.currentIndexChanged.connect(self.refresh_search)
+            self.search_list.hide()
+            self.flag=False
+            myapp = MyBrowser()
+            myapp.ui.qwebview.load(QUrl("http://www.google.com"))
+            self.splitter1.addWidget(myapp)
+
+
+
+
+
 
     def tick_splitter(self):
         if self.treeview.width()>0  :
@@ -457,7 +519,7 @@ class Filemanager(QtGui.QWidget):
         except:
             print "COUDNT"
 
-#####################33
+################################################33
     def rename_btn_clicked(self):
         self.click_sound=QtGui.QSound("_click_.wav")
         self.click_sound.play()
@@ -531,6 +593,7 @@ class Filemanager(QtGui.QWidget):
 
     def desktop_btn_clicked(self):
         spath = operator("desktop_adr")
+        self.temp_path=str(operator("desktop_adr"))
         self.listview.setRootIndex(self.filemodel.setRootPath(spath))
         if self.backlst[len(self.backlst)-1] != spath:
                 self.backlst.append(spath)
