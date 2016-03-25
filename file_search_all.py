@@ -9,12 +9,20 @@ def check_with_pattern(name, my_list):
     return result
 
 
-def file_search_all(directory, name):
+def file_search_all_temp(directory, name):
     result = []
     for root, folders, files in os.walk(directory):
         matches = check_with_pattern(name, files)
         for item in matches:
             result.append(os.path.join(root, item))
+            yield result
+
+
+def file_search_all(directory, name):
+    for item in file_search_all_temp(directory, name):
+        result = item
     return result
+
+
 
 #print file_search_all("d:\\", '123')
