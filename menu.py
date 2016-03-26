@@ -353,25 +353,25 @@ class Filemanager(QtGui.QWidget):
                     self.complete_folder_search.setDisabled(True)
                     self.exact_folder_search.setDisabled(True)
                     self.search_list.clear()
-                    self.list_data=operator("file_search_all",str(self.temp_path),str(searchpath))
+                    self.list_data=operator("file_search_all",str(self.backlst[-1]),str(self.searchbar.text()))
                 if self.exact_file_search.isChecked():
                     self.complete_file_search.setDisabled(True)
                     self.complete_folder_search.setDisabled(True)
                     self.exact_folder_search.setDisabled(True)
                     self.search_list.clear()
-                    self.list_data=operator("file_search_exact",str(self.temp_path),str(searchpath))
+                    self.list_data=operator("file_search_exact",str(self.backlst[-1]),str(self.searchbar.text()))
                 if self.complete_folder_search.isChecked():
                     self.exact_file_search.setDisabled(True)
                     self.complete_file_search.setDisabled(True)
                     self.exact_folder_search.setDisabled(True)
                     self.search_list.clear()
-                    self.list_data=operator("folder_search_all",str(self.temp_path),str(searchpath))
+                    self.list_data=operator("folder_search_all",str(self.backlst[-1]),str(self.searchbar.text()))
                 if self.exact_folder_search.isChecked():
                     self.exact_file_search.setDisabled(True)
                     self.complete_folder_search.setDisabled(True)
                     self.complete_file_search.setDisabled(True)
                     self.search_list.clear()
-                    self.list_data=operator("folder_search_exact",str(self.temp_path),str(searchpath))
+                    self.list_data=operator("folder_search_exact",str(self.backlst[-1]),str(self.searchbar.text()))
                 if (not self.complete_file_search.isChecked()) and (not self.exact_file_search.isChecked()) and (not self.complete_folder_search.isChecked()) and (not self.exact_folder_search.isChecked()):
                     self.exact_file_search.setEnabled(True)
                     self.complete_folder_search.setEnabled(True)
@@ -469,7 +469,7 @@ class Filemanager(QtGui.QWidget):
     def on_cmd_clicked(self,spath):
         self.click_sound=QtGui.QSound("_click_.wav")
         self.click_sound.play()
-        operator("cmd",str(self.addressbar.text()))
+        operator("cmd",str(self.backlst[-1]))
 
     def next_clicked(self):
         self.click_sound=QtGui.QSound("_click_.wav")
