@@ -14,6 +14,7 @@ class Filemanager(QtGui.QWidget):
     def initui(self):
         self.temp_path=""
         self.list_data=[]
+        self.google_flag=False
         hbox = QtGui.QVBoxLayout()
         self.backlst = [""]
         self.nextlst = []
@@ -200,16 +201,28 @@ class Filemanager(QtGui.QWidget):
 
         self.treeview.setAcceptDrops(True)
         self.listview.setDragEnabled(True)
+        self.splitter2 = QtGui.QSplitter(QtCore.Qt. Vertical)
         self.splitter1 = QtGui.QSplitter(QtCore.Qt.Horizontal)
+
         self.splitter1.addWidget(self.treeview)
-        self.splitter1.addWidget(self.listview)
         self.splitter1.setSizes([75, 200])
+        self.splitter1.addWidget(self.listview)
+        self.setLayout(hbox)
+        self.splitter2.addWidget(self.splitter1)
+        self.empty_lbl4=QtGui.QLabel()
+        self.empty_lbl5=QtGui.QLabel()
 
         self.splitter1.setAcceptDrops(True)
         self.splitter1.installEventFilter(self)
         hbox.addLayout(vbox)
-        hbox.addWidget(self.splitter1)
+        #hbox.addWidget(self.splitter1)
+        hbox.addWidget(self.splitter2)
         QtGui.QApplication.setStyle(QtGui.QStyleFactory.create("Cleanlooks"))
+
+        self.exact_file_search.setDisabled(True)
+        self.complete_folder_search.setDisabled(True)
+        #self.complete_file_search.setDisabled(True)
+        self.exact_folder_search.setDisabled(True)
 
 
         self.splitter1.splitterMoved.connect(self.tick_splitter)
@@ -252,7 +265,7 @@ class Filemanager(QtGui.QWidget):
         self.statusbar.setFixedHeight(20)
         hbox.addWidget(self.statusbar)
 
-        self.searchbar.returnPressed.connect(self.search_func)
+        #self.searchbar.returnPressed.connect(self.search_func)
         self.setGeometry(100, 100, 700, 500)
         self.setWindowTitle('FileManager')
         self.setLayout(hbox)
@@ -329,33 +342,40 @@ class Filemanager(QtGui.QWidget):
             if (not self.complete_file_search.isChecked()) and (not self.exact_file_search.isChecked()) and (not self.complete_folder_search.isChecked()) and (not self.exact_folder_search.isChecked()):
                 self.search_list.clear()
             if not self.flag :
+                if self.google_flag:
+                    self.myapp.close()
                 self.splitter1.addWidget(self.search_list)
                 self.flag=True
+                self.searchbar.setEnabled(True)
                 if self.complete_file_search.isChecked():
-                    self.exact_file_search.setChecked(False)
-                    self.complete_folder_search.setChecked(False)
-                    self.exact_folder_search.setChecked(False)
+                    self.exact_file_search.setDisabled(True)
+                    self.complete_folder_search.setDisabled(True)
+                    self.exact_folder_search.setDisabled(True)
                     self.search_list.clear()
                     self.list_data=operator("file_search_all",str(self.temp_path),str(searchpath))
                 if self.exact_file_search.isChecked():
-                    self.complete_file_search.setChecked(False)
-                    self.complete_folder_search.setChecked(False)
-                    self.exact_folder_search.setChecked(False)
+                    self.complete_file_search.setDisabled(True)
+                    self.complete_folder_search.setDisabled(True)
+                    self.exact_folder_search.setDisabled(True)
                     self.search_list.clear()
                     self.list_data=operator("file_search_exact",str(self.temp_path),str(searchpath))
                 if self.complete_folder_search.isChecked():
-                    self.exact_file_search.setChecked(False)
-                    self.complete_file_search.setChecked(False)
-                    self.exact_folder_search.setChecked(False)
+                    self.exact_file_search.setDisabled(True)
+                    self.complete_file_search.setDisabled(True)
+                    self.exact_folder_search.setDisabled(True)
                     self.search_list.clear()
                     self.list_data=operator("folder_search_all",str(self.temp_path),str(searchpath))
                 if self.exact_folder_search.isChecked():
-                    self.exact_file_search.setChecked(False)
-                    self.complete_folder_search.setChecked(False)
-                    self.complete_file_search.setChecked(False)
+                    self.exact_file_search.setDisabled(True)
+                    self.complete_folder_search.setDisabled(True)
+                    self.complete_file_search.setDisabled(True)
                     self.search_list.clear()
                     self.list_data=operator("folder_search_exact",str(self.temp_path),str(searchpath))
-
+                if (not self.complete_file_search.isChecked()) and (not self.exact_file_search.isChecked()) and (not self.complete_folder_search.isChecked()) and (not self.exact_folder_search.isChecked()):
+                    self.exact_file_search.setEnabled(True)
+                    self.complete_folder_search.setEnabled(True)
+                    self.complete_file_search.setEnabled(True)
+                    self.exact_folder_search.setEnabled(True)
             try :
                 for i in range (len(self.list_data)):
                     items=self.search_list.findItems('', QtCore.Qt.MatchRegExp)
@@ -372,13 +392,23 @@ class Filemanager(QtGui.QWidget):
                 self.search_list=QtGui.QListWidget()
 
         elif (self.combo.currentText()=="Google Search"):
+            self.google_flag=True
+            self.searchbar.setDisabled(True)
             search_add=self.addressbar.text()
             self.combo.currentIndexChanged.connect(self.refresh_search)
             self.search_list.hide()
             self.flag=False
-            myapp = MyBrowser()
-            myapp.ui.qwebview.load(QUrl("http://www.google.com"))
-            self.splitter1.addWidget(myapp)
+            self.myapp = MyBrowser()
+            self.myapp.ui.qwebview.load(QUrl("http://www.google.com"))
+
+            self.splitter2.addWidget(self.myapp)
+            self.empty_lbl4.setFixedHeight(0)
+            #self.splitter2.addWidget(self.empty_lbl4)
+
+            self.myapp.setMinimumHeight(100)
+            self.myapp.setMaximumHeight(600)
+
+
 
 
 

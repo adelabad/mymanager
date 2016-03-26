@@ -20,10 +20,10 @@ except AttributeError:
  
 class BrowserDialog(object):
     def setupUi(self, Dialog):
-        Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(1020, 520)
+        #Dialog.setObjectName(_fromUtf8("Dialog"))
+        Dialog.resize(100, 100)
         self.qwebview = QWebView(Dialog)
-        self.qwebview.setGeometry(QtCore.QRect(0, 0, 1000, 520))
+        self.qwebview.setGeometry(QtCore.QRect(1, 1, 1340, 430))
         self.qwebview.setObjectName(_fromUtf8("kwebview"))
        
         self.retranslateUi(Dialog)
