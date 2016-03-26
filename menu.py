@@ -343,7 +343,8 @@ class Filemanager(QtGui.QWidget):
                 self.search_list.clear()
             if not self.flag :
                 if self.google_flag:
-                    self.myapp.close()
+                    self.google_flag=False
+                    self.myapp.hide()
                 self.splitter1.addWidget(self.search_list)
                 self.flag=True
                 self.searchbar.setEnabled(True)
@@ -391,7 +392,7 @@ class Filemanager(QtGui.QWidget):
                 self.flag=False
                 self.search_list=QtGui.QListWidget()
 
-        elif (self.combo.currentText()=="Google Search"):
+        if (self.combo.currentText()=="Google Search" and not(self.google_flag)):
             self.google_flag=True
             self.searchbar.setDisabled(True)
             search_add=self.addressbar.text()
