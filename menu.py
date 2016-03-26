@@ -331,23 +331,23 @@ class Filemanager(QtGui.QWidget):
 
     @QtCore.pyqtSlot(QtCore.QModelIndex)
     def search_func(self):
-        self.combo.currentIndexChanged.connect(self.refresh_search)
+        #self.combo.currentIndexChanged.connect(self.search_func)
         #self.searchbar.clear()
         if (self.combo.currentText()=="System Search"):
 
-            self.combo.currentIndexChanged.connect(self.refresh_search)
+            self.combo.currentIndexChanged.connect(self.search_func)
             searchpath=self.searchbar.text()
             self.flag=False
             #self.searchbar.textChanged.connect(self.refresh_search)
             if (not self.complete_file_search.isChecked()) and (not self.exact_file_search.isChecked()) and (not self.complete_folder_search.isChecked()) and (not self.exact_folder_search.isChecked()):
                 self.search_list.clear()
             if not self.flag :
-                if self.google_flag:
-                    self.google_flag=False
-                    self.myapp.hide()
                 self.splitter1.addWidget(self.search_list)
                 self.flag=True
                 self.searchbar.setEnabled(True)
+                if self.google_flag:
+                    self.google_flag=False
+                    self.myapp.hide()
                 if self.complete_file_search.isChecked():
                     self.exact_file_search.setDisabled(True)
                     self.complete_folder_search.setDisabled(True)
